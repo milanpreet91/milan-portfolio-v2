@@ -1,5 +1,5 @@
-from flask import Flask, render_template
-
+from flask import Flask, render_template, jsonify
+from database import projects_from_database, load_job_from_db
 app = Flask(__name__) # name references app.py file
 #app is object of class Flask
 #__name__ : refers to how the script is invoked. 
@@ -12,6 +12,7 @@ app = Flask(__name__) # name references app.py file
 #<domain_name>/<route>: jovian.com/profile
 #Use decorator for registering
 #when url / accessed, print "hello_world"
+
 PROJECTS = [
     {
         'id':1,
@@ -32,9 +33,15 @@ PROJECTS = [
         'Skills' : 'C++, Python' 
     }
 ]
+@app.route('/job/<id>')
+def job_page(id):
+    job = load_job_from_db(id)
+    return jsonify(job)
+
 @app.route('/') #pass url route for home
 def home_page():
-    return render_template('home_page.html', projects=PROJECTS)
+    PROJECTS_from_DB = projects_from_database()
+    return render_template('home_page.html', projects=PROJECTS_from_DB)
 
 #if running app.py as a script, 
 # then start the app using below command
